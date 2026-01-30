@@ -18,10 +18,31 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     e.preventDefault()
     setStatus('loading')
     
-    // Simulate API call - user will provide destination later
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    setStatus('success')
+    try {
+      const response = await fetch(
+        'https://x8ki-letl-twmt.n7.xano.io/api:7pwSPeIt/waitlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            full_name: name,
+            work_email: email,
+          }),
+        }
+      )
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit')
+      }
+      
+      setStatus('success')
+    } catch (error) {
+      console.error('Waitlist submission error:', error)
+      setStatus('idle')
+      alert('Failed to submit. Please try again.')
+    }
   }
 
   return (
